@@ -1,6 +1,6 @@
 import axios from "axios";
-import {BASE_URL} from "./ApiEndpoints.js"
-const axiosConfig = axios.create({
+import {BASE_URL} from "./API_ENDPOINTS.js"
+export const AxiosConfig = axios.create({
     baseURL: BASE_URL,
     headers: {
         "Content-Type": "application/json",
@@ -10,7 +10,7 @@ const axiosConfig = axios.create({
 // List of endpoints to exclude authorization
 const excludeEndPoints = ["/profile/login", "/profile/register", "/status", "/health", "/profile/activate"];
 // Request Interceptors
-axiosConfig.interceptors.request.use((config) => {
+AxiosConfig.interceptors.request.use((config) => {
         const shouldSkipToken = excludeEndPoints.some((endPoint) => {
             config.url?.includes(endPoint)
         });
@@ -30,7 +30,7 @@ axiosConfig.interceptors.request.use((config) => {
 
 
 // Response Interceptors
-axiosConfig.interceptors.response.use((response) => {
+AxiosConfig.interceptors.response.use((response) => {
         return response;
     }, (error) => {
         if (error.response) {
