@@ -1,26 +1,29 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import Input from "../components/Input.jsx";
 import {AxiosConfig} from "../util/AxiosConfig.jsx";
 import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
 import toast from "react-hot-toast";
 import {LoaderPinwheel} from "lucide-react";
+import {AppContext} from "../context/AppContext.jsx";
 
 const Login = () => {
 
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [countdown, setCountdown] = useState(5);// For timer of 5 seconds toast to redirect automatically to /signup page
+    const [email, setEmail] = useState("email@zohomail.in");
+    // const [fullName, setFullName] = useState(null);
+    const [password, setPassword] = useState("Manish@123456");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const {setUser} = useContext(AppContext);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         setError("");
 
-        // 1. Basic Frontend Validation (Prevent unnecessary API calls)
         if (!email || !password) {
             toast.error("Please fill in all fields");
             setIsLoading(false);
@@ -28,49 +31,155 @@ const Login = () => {
         }
 
         try {
-            const response = await AxiosConfig.post(API_ENDPOINTS.LOGIN, {
-                email,
-                password,
-            });
+            const response = await AxiosConfig.post(API_ENDPOINTS.LOGIN, { email, password });
+
+            // If your backend returns 200 but has an error object inside (unlikely but possible)
+            if (response.data?.error) {
+                toast.error(response.data.error.message);
+                setIsLoading(false);
+                return;
+            }
 
             if (response.status === 200) {
-                // Success! Store your token/user data here if needed
-                toast.success("Welcome back! Login Successful");
-                navigate("/dashboard");
+                const userData = response.data.data; // Access the "data" field from your JSON
+
+                if (userData && userData.accessToken) {
+                    localStorage.setItem("accessToken", userData.accessToken);
+                    localStorage.setItem("refreshToken", userData.refreshToken);
+
+                    setUser({
+                        id: userData.id,
+                        fullName: userData.fullName,
+                        email: email,
+                        profileImageUrl:userData.profileImageUrl
+                    });
+
+                    toast.success("Welcome back! Login Successful");
+                    setTimeout(() => navigate("/dashboard"), 100);
+                } else {
+                    toast.error("Login failed: Token not found in response.");
+                }
             }
         } catch (error) {
-            // 2. Handle Specific HTTP Status Codes
+            // --- IMPROVED ERROR HANDLING ---
+            const responseData = error.response?.data;
             const status = error.response?.status;
-            const serverMessage = error.response?.data?.message;
 
-            if (status === 401) {
-                // Wrong Password
-                toast("Invalid Password. Please try again.", {
-                    icon: '⚠️',
-                    style: { background: '#fef9c3', color: '#854d0e', border: '1px solid #facc15' },
-                });
+            // Extracting the message based on your specific JSON: response.data.error.message
+            const serverMessage = responseData?.error?.message
+                || responseData?.message
+                || "An unexpected error occurred";
+
+            if (!error.response) {
+                toast.error("Server unreachable. Please check your connection.");
             } else if (status === 404) {
-                // User doesn't exist
-                toast.error("Account not found. Please sign up first.");
-            } else if (status === 400) {
-                // Validation error from backend
-                toast.error(serverMessage || "Invalid email or password format");
-            } else if (status >= 500) {
-                // Server is down
-                toast.error("Server is currently unreachable. Try again later.");
+                handleAccountNotFoundCountdown();
+            } else if (status === 403 || status === 401 || status === 500) {
+                // This will now correctly show "Account is not Active..."
+                // even if the backend returns it as a 500 error.
+                toast.error(serverMessage);
             } else {
-                // Network error or unknown
-                const errorMessage = serverMessage || "Connection failed. Check your internet.";
-                setError(errorMessage);
-                toast.error(errorMessage);
+                toast.error(serverMessage);
             }
 
-            console.error("Login Error Details:", error);
+            console.error("Login Error Details:", responseData);
         } finally {
-            // 3. Always stop the loader
             setIsLoading(false);
         }
     };
+
+
+
+
+
+
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setIsLoading(true);
+    //     setError("");
+    //
+    //     if (!email || !password) {
+    //         toast.error("Please fill in all fields");
+    //         setIsLoading(false);
+    //         return;
+    //     }
+    //
+    //     try {
+    //         const response = await AxiosConfig.post(API_ENDPOINTS.LOGIN, {email, password});
+    //         // 1. Log the full Axios object to see status, headers, and config
+    //         console.log("Full Axios Response:", response.data.error);
+    //
+    //         // 2. Log just the body sent by your Spring Boot API
+    //         console.log("Server JSON Body:", response.data);
+    //         if (response.status === 200) {
+    //             const serverResponse = response.data;
+    //             const userData = serverResponse.data; // This is the inner { accessToken, refreshToken, id }
+    //
+    //             if (userData && userData.accessToken) {
+    //                 localStorage.setItem("accessToken", userData.accessToken);
+    //                 localStorage.setItem("refreshToken", userData.refreshToken);
+    //
+    //                 setUser({
+    //                     id: userData.id,
+    //                     fullName: userData.fullName,
+    //                     email: email
+    //                 });
+    //                 toast.success("Welcome back! Login Successful");
+    //                 setTimeout(() => navigate("/dashboard"), 100);
+    //             } else {
+    //                 console.error("Structure mismatch. Received:", serverResponse);
+    //                 toast.error("Login failed: Token structure not recognized.");
+    //             }
+    //         }
+    //     } catch (error) {
+    //         const status = error.response?.status;
+    //         // Check for apiError message or generic message
+    //         const serverMessage = error.response?.data?.apiError?.message
+    //             || error.response?.data?.message
+    //             || "An unexpected error occurred";
+    //
+    //         if (!error.response) {
+    //             toast.error("Server unreachable. Please try again in a moment.");
+    //         } else if (status === 404) {
+    //             handleAccountNotFoundCountdown();
+    //         } else if (status === 401 || status === 400) {
+    //             toast.error("Invalid credentials. Please check your email and password.");
+    //         } else if (status === 403) {
+    //             toast.error(serverMessage);
+    //         } else {
+    //             toast.error(serverMessage);
+    //         }
+    //         console.error("Login Error:", error);
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+// Helper for the countdown to keep handleSubmit clean
+    const handleAccountNotFoundCountdown = () => {
+        let secondsLeft = 5;
+        const toastId = toast.loading(`Account not found. Redirecting in ${secondsLeft}s...`);
+
+        const timer = setInterval(() => {
+            secondsLeft -= 1;
+            if (secondsLeft <= 0) {
+                clearInterval(timer);
+                toast.dismiss(toastId);
+                navigate("/signup");
+            } else {
+                toast(`Account not found. Redirecting to Signup in ${secondsLeft}s`, {
+                    id: toastId,
+                    icon: '⚠️',
+                    style: {
+                        background: '#fef9c3',
+                        color: '#854d0e',
+                        border: '2px solid #facc15'
+                    }
+                });
+            }
+        }, 1000);
+    };
+
     return (
         <div
             className="h-screen w-full relative flex items-center justify-center overflow-hidden">
@@ -121,7 +230,8 @@ const Login = () => {
                         {isLoading ? (
                             <div className="flex items-center gap-2">
                                 {/* Use animate-spin for a rotating loader, or animate-bounce for jumping */}
-                                <LoaderPinwheel className="animate-spin w-5 h-5 text-white"/>
+                                <LoaderPinwheel
+                                    className="animate-spin w-5 h-5 text-white"/>
                                 <span className="text-white">Logging In...</span>
                             </div>
                         ) : (

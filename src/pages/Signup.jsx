@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {assets} from "../assets/assets.js";
 import Input from "../components/Input.jsx";
@@ -12,6 +12,9 @@ import {
 } from "../util/Validation.js";
 import toast from "react-hot-toast";
 import {LoaderPinwheel} from "lucide-react";
+import ProfilePhotSelectors from "../components/ProfilePhotSelectors.jsx";
+import uploadProfileImage from "../util/UploadProfileImage.js";
+import {AppContext} from "../context/AppContext.jsx";
 
 const Signup = () => {
     const [countdown, setCountdown] = useState(5);// For timer of 5 seconds toast to redirect automatically to /login page
@@ -20,14 +23,18 @@ const Signup = () => {
     const [password, setPassword] = useState("Manish@123456");
     const [confirmPassword, setConfirmPassword] = useState("Manish@123456");
     const [error, setError] = useState("");
+    const [profilePhoto, setProfilePhoto] = useState("");
     const navigate = useNavigate();
     const strengthCheck = getPasswordStrength(password);
     const [isLoading, setIsLoading] = useState(false);
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        let profileImageUrl = "";
         setIsLoading(true);
         setError("");
+
         const nameError = checkFullName(fullName);
         if (nameError) {
             setIsLoading(false);
@@ -49,10 +56,16 @@ const Signup = () => {
         }
 
         try {
+            if (profilePhoto) {
+                const imageUrl = await uploadProfileImage(profilePhoto);
+                profileImageUrl = imageUrl || "";
+
+
+            }
             const response = await AxiosConfig.post(API_ENDPOINTS.REGISTER, {
                 fullName,
                 email,
-                password,
+                password, profileImageUrl,
             });
 
             if (response.status === 201) {
@@ -129,6 +142,9 @@ const Signup = () => {
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="flex justify-center mb-6">
+                        <ProfilePhotSelectors image={profilePhoto} setImage={setProfilePhoto}/>
+                    </div>
                     {/* Full Name - Full Width */}
                     <Input
                         value={fullName}

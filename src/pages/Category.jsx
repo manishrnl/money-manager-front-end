@@ -1,6 +1,11 @@
+import Dashboards from "../components/Dashboards.jsx";
+
 const Category = () => {
-    return(
-        <div>Category</div>
+    return (
+        <div><Dashboards activeMenu="Category">
+            This is Category Page
+        </Dashboards>
+        </div>
     )
 }
 export default Category;
