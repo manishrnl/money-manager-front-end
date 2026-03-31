@@ -7,7 +7,6 @@ import Sidebar from "./Sidebar.jsx";
 
 const Menubar = ({activeMenu}) => {
 
-
     const [openSideMenu, setOpenSideMenu] = useState(false);
     const [showDropDown, setShowDropDown] = useState(false);
     const dropDownRef = useRef(null)
@@ -60,7 +59,7 @@ const Menubar = ({activeMenu}) => {
                 <button onClick={() => setShowDropDown(!showDropDown)}
                         className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2">
                     <User className="text-purple-500"/>
-                    <img src={user.profileImageUrl} alt="" className="rounded-full"/>
+                    <img src={user.profileImageUrl} alt="profile" className="rounded-full"/>
 
 
                 </button>

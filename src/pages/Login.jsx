@@ -1,5 +1,5 @@
-import {useContext, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useContext, useEffect, useRef, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import Input from "../components/Input.jsx";
 import {AxiosConfig} from "../util/AxiosConfig.jsx";
 import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
@@ -9,14 +9,34 @@ import {AppContext} from "../context/AppContext.jsx";
 
 const Login = () => {
 
-    const [countdown, setCountdown] = useState(5);// For timer of 5 seconds toast to redirect automatically to /signup page
-    const [email, setEmail] = useState("email@zohomail.in");
+    // const [countdown, setCountdown] = useState(5);// For timer of 5 seconds toast to redirect automatically to /signup page
+    const [email, setEmail] = useState("89@zohomail.in");
     // const [fullName, setFullName] = useState(null);
-    const [password, setPassword] = useState("Manish@123456");
+    const [password, setPassword] = useState("password");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const {setUser} = useContext(AppContext);
+
+
+    const location = useLocation();
+    const hasToasted = useRef(false); // Prevents double-toasting in Strict Mode
+
+    useEffect(() => {
+        const state = location.state;
+        // Check if the user was redirected here because they weren't authorized
+        if (state?.unauthorized && !hasToasted.current) {
+            const pageName = state.from
+                ? state.from.replace("/", "").toUpperCase()
+                : "that page";
+
+            toast.error(`Routes are secured . Please login to access page ${pageName}`, {
+                id: "auth-denied", // Giving it an ID prevents duplicate toasts
+                duration: 4000,
+            });
+            hasToasted.current = true;
+        }
+    }, [location]);
 
 
     const handleSubmit = async (e) => {
@@ -31,7 +51,7 @@ const Login = () => {
         }
 
         try {
-            const response = await AxiosConfig.post(API_ENDPOINTS.LOGIN, { email, password });
+            const response = await AxiosConfig.post(API_ENDPOINTS.LOGIN, {email, password});
 
             // If your backend returns 200 but has an error object inside (unlikely but possible)
             if (response.data?.error) {
@@ -51,7 +71,7 @@ const Login = () => {
                         id: userData.id,
                         fullName: userData.fullName,
                         email: email,
-                        profileImageUrl:userData.profileImageUrl
+                        profileImageUrl: userData.profileImageUrl
                     });
 
                     toast.success("Welcome back! Login Successful");
@@ -89,72 +109,6 @@ const Login = () => {
     };
 
 
-
-
-
-
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setIsLoading(true);
-    //     setError("");
-    //
-    //     if (!email || !password) {
-    //         toast.error("Please fill in all fields");
-    //         setIsLoading(false);
-    //         return;
-    //     }
-    //
-    //     try {
-    //         const response = await AxiosConfig.post(API_ENDPOINTS.LOGIN, {email, password});
-    //         // 1. Log the full Axios object to see status, headers, and config
-    //         console.log("Full Axios Response:", response.data.error);
-    //
-    //         // 2. Log just the body sent by your Spring Boot API
-    //         console.log("Server JSON Body:", response.data);
-    //         if (response.status === 200) {
-    //             const serverResponse = response.data;
-    //             const userData = serverResponse.data; // This is the inner { accessToken, refreshToken, id }
-    //
-    //             if (userData && userData.accessToken) {
-    //                 localStorage.setItem("accessToken", userData.accessToken);
-    //                 localStorage.setItem("refreshToken", userData.refreshToken);
-    //
-    //                 setUser({
-    //                     id: userData.id,
-    //                     fullName: userData.fullName,
-    //                     email: email
-    //                 });
-    //                 toast.success("Welcome back! Login Successful");
-    //                 setTimeout(() => navigate("/dashboard"), 100);
-    //             } else {
-    //                 console.error("Structure mismatch. Received:", serverResponse);
-    //                 toast.error("Login failed: Token structure not recognized.");
-    //             }
-    //         }
-    //     } catch (error) {
-    //         const status = error.response?.status;
-    //         // Check for apiError message or generic message
-    //         const serverMessage = error.response?.data?.apiError?.message
-    //             || error.response?.data?.message
-    //             || "An unexpected error occurred";
-    //
-    //         if (!error.response) {
-    //             toast.error("Server unreachable. Please try again in a moment.");
-    //         } else if (status === 404) {
-    //             handleAccountNotFoundCountdown();
-    //         } else if (status === 401 || status === 400) {
-    //             toast.error("Invalid credentials. Please check your email and password.");
-    //         } else if (status === 403) {
-    //             toast.error(serverMessage);
-    //         } else {
-    //             toast.error(serverMessage);
-    //         }
-    //         console.error("Login Error:", error);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 // Helper for the countdown to keep handleSubmit clean
     const handleAccountNotFoundCountdown = () => {
         let secondsLeft = 5;

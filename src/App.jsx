@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {Toaster} from "react-hot-toast";
 import Home from "./pages/Home.jsx";
 import Income from "./pages/Income.jsx";
@@ -7,29 +7,46 @@ import Category from "./pages/Category.jsx";
 import Filter from "./pages/Filter.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx"
 
 
 function App() {
+    const isAuthenticated = !!localStorage.getItem("accessToken");
+
     return (
         <>
             <BrowserRouter>
-
                 <Routes>
-                    <Route path="/dashboard" element={<Home/>}/>
-                    <Route path="/income" element={<Income/>}/>
-                    <Route path="/expense" element={<Expense/>}/>
-                    <Route path="/category" element={<Category/>}/>
-                    <Route path="/filter" element={<Filter/>}/>
+                    {/* 1. Handle the Root Path (/) */}
+                    <Route
+                        path="/"
+                        element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"}
+                                           replace/>}
+                    />
+
+                    {/* 2. Protected Routes */}
+                    <Route path="/dashboard"
+                           element={<ProtectedRoute><Home/></ProtectedRoute>}/>
+                    <Route path="/income"
+                           element={<ProtectedRoute><Income/></ProtectedRoute>}/>
+                    <Route path="/expense"
+                           element={<ProtectedRoute><Expense/></ProtectedRoute>}/>
+                    <Route path="/category"
+                           element={<ProtectedRoute><Category/></ProtectedRoute>}/>
+                    <Route path="/filter"
+                           element={<ProtectedRoute><Filter/></ProtectedRoute>}/>
+
+                    {/* 3. Public Routes */}
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/signup" element={<Signup/>}/>
 
-
+                    {/* Optional: Catch-all for 404s */}
+                    <Route path="*" element={<Navigate to="/" replace/>}/>
                 </Routes>
-
             </BrowserRouter>
-            <Toaster position="top-right" reverseOrder={false} />
+            <Toaster position="top-right" reverseOrder={false}/>
         </>
-    )
+    );
 }
 
 export default App;

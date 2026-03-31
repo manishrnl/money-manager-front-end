@@ -23,27 +23,7 @@ const Dashboards = ({children, activeMenu}) => {
         </div>
     )
 }
-// const Dashboards = ({children, activeMenu}) => {
-//     const {user} = useContext(AppContext)
-//     return (
-//         <div>
-//             <Menubar activeMenu={activeMenu}/>
-//             {user &&(
-//                 <div className="flex">
-//                     <div className="max-[1080px]:hidden ">
-//                         {/*Sidebar Content*/}
-//                         <Sidebar activeMenu={activeMenu}/>
-//                     </div>
-//                     <div className="grow mx-5 "><p>{children}</p>
-//                         {/*Right side Content*/}
-//                     </div>
-//
-//                 </div>
-//             )}
-//
-//         </div>
-//     )
-// }
+
 export default Dashboards;
 
 
