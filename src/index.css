@@ -15,9 +15,9 @@ body, html {
 }
 
 /* Optional: Make the background color a fallback in case image fails to load */
-body {
-    background-color: var(--background);
-}
+/*body {*/
+/*    background-color: var(--background);*/
+/*}*/
 
 /*For Animation while fetching data from server */
 @keyframes spin {
