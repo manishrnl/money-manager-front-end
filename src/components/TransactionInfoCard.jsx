@@ -1,4 +1,4 @@
-import {TrendingDown, TrendingUp, UtensilsCrossed,Trash2} from "lucide-react";
+import {Trash2, TrendingDown, TrendingUp, UtensilsCrossed} from "lucide-react";
 import {addThousandsSeparator} from "../util/ThousandsSeparator.js";
 
 const TransactionInfoCard = ({icon, title, date, amount, type, hideDeleteBtn, onDelete}) => {
@@ -35,14 +35,18 @@ const TransactionInfoCard = ({icon, title, date, amount, type, hideDeleteBtn, on
 
                     )}
                     <div
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-md ${getAmountStyles()}`}>
-                        <h6 className={`text-xs font-medium`}>
-                            {type === 'income' ? '+' : '-'} ${addThousandsSeparator(amount)}
-
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg shadow-sm ${getAmountStyles()}`}>
+                        {/* Added flex and items-center to the h6 to align the icon with the text */}
+                        <h6 className="flex items-center gap-1.5 text-xs font-bold whitespace-nowrap">
+        <span>
+            {type === 'income' ? '+' : '-'} ₹{addThousandsSeparator(amount)}
+        </span>
 
                             {type === 'income' ? (
-                                <TrendingUp size={15}/>
-                            ) : (<TrendingDown size={15}/>)}
+                                <TrendingUp size={14} strokeWidth={3}/>
+                            ) : (
+                                <TrendingDown size={14} strokeWidth={3}/>
+                            )}
                         </h6>
                     </div>
                 </div>

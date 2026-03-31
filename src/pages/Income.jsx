@@ -6,6 +6,7 @@ import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
 import IncomeList from "../components/IncomeList.jsx";
 import Modals from "../components/Modals.jsx";
 import {Plus} from "lucide-react";
+import AddIncomeForm from "../components/AddIncomeForm.jsx";
 
 const Income = () => {
 
@@ -39,9 +40,22 @@ const Income = () => {
             setLoading(false);
         }
     };
+    // Fetch Income Categories
 
+    const fetchIncomeCategories = async () => {
+        try {
+            const response = await AxiosConfig.get(API_ENDPOINTS.GET_CATEGORY_BY_TYPE("INCOME"));
+            if (response.status === 200) {
+                console.log("categories are : ", response.data)
+                setCategories(response.data)
+            }
+        } catch (error) {
+            toast.error(error.data?.message || "Failed to fetch income categories");
+        }
+    }
     useEffect(() => {
-        fetchIncomeDetails();
+        // fetchIncomeDetails();
+        fetchIncomeCategories();
     }, [])
 
 
@@ -58,7 +72,7 @@ const Income = () => {
                                 className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                                 onClick={() => setOpenAddIncomeModal(true)}
                             >
-                                <Plus size={18} strokeWidth={3} />
+                                <Plus size={18} strokeWidth={3}/>
                                 <span>Add Income</span>
                             </button>
                         </div>
@@ -73,7 +87,10 @@ const Income = () => {
                             onClose={() => setOpenAddIncomeModal(false)}
                             title="Add Income"
                         >
-                            Income from the modals
+                            <AddIncomeForm
+                                onAddIncome={() => console.log("Add Income")}
+                                categories={categories}
+                            />
                         </Modals>
 
                     </div>
