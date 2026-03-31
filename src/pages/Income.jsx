@@ -13,8 +13,9 @@ const Income = () => {
     const [incomeData, setIncomeData] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // New state for the button spinner
 
-    const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false)
+    const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
     const [openDeleteAlert, setOpenDeleteAlert] = useState({
         show: false,
         data: null,
@@ -46,19 +47,57 @@ const Income = () => {
         try {
             const response = await AxiosConfig.get(API_ENDPOINTS.GET_CATEGORY_BY_TYPE("INCOME"));
             if (response.status === 200) {
-                console.log("categories are : ", response.data)
-                setCategories(response.data)
+                // FIX: Access response.data.data to get the actual array
+                const categoryArray = response.data?.data || response.data;
+
+                console.log("Setting categories to:", categoryArray);
+                setCategories(categoryArray);
             }
         } catch (error) {
-            toast.error(error.data?.message || "Failed to fetch income categories");
+            toast.error(error.response?.data?.message || "Failed to fetch income categories");
         }
     }
     useEffect(() => {
-        // fetchIncomeDetails();
+        fetchIncomeDetails();
         fetchIncomeCategories();
     }, [])
 
+    const handleSubmit = async (income) => {
+        // 1. Destructure for cleaner validation
+        const {name, amount, date, categoryId, icon} = income;
 
+        // 2. Comprehensive Validation
+        if (!name.trim()) {
+            return toast.error("Please enter an income source name");
+        }
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
+            return toast.error("Please enter a valid amount greater than 0");
+        }
+        if (!date) {
+            return toast.error("Please select a transaction date");
+        }
+        setIsSubmitting(true)
+
+
+
+        try {
+
+            const response = await AxiosConfig.post(API_ENDPOINTS.ADD_INCOME, {
+                name, amount: Number(amount), date, icon, categoryId
+            })
+
+            if (response.status === 200 || response.status === 201) {
+                toast.success("Income added successfully!");
+                setOpenAddIncomeModal(false); // Close modal
+                fetchIncomeDetails(); // Refresh the list
+            }
+        } catch (error) {
+            console.error("Submission Error:", error);
+            toast.error(error.response?.data?.message || "Failed to add income");
+        } finally {
+            setIsSubmitting(false); // Stop loading spinner
+        }
+    };
     return (
         <div>
             <Dashboards activeMenu="Income">
@@ -88,7 +127,7 @@ const Income = () => {
                             title="Add Income"
                         >
                             <AddIncomeForm
-                                onAddIncome={() => console.log("Add Income")}
+                                onAddIncome={(income) => handleSubmit(income)}
                                 categories={categories}
                             />
                         </Modals>

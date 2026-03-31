@@ -91,7 +91,7 @@ const Signup = () => {
                     secondsLeft -= 1;
 
                     // Update the existing toast text
-                    toast(`Email already registered. Redirecting in ${secondsLeft} seconds`, {
+                    toast(`Email already registered. Redirecting you to login page in ${secondsLeft} seconds`, {
                         id: toastId, // This targets the specific toast we just made
                         icon: '⚠️',
                         style: {
@@ -122,8 +122,8 @@ const Signup = () => {
 
     }
     return (
-        <div
-            className="h-screen w-full relative flex items-center justify-center overflow-hidden">
+        /* min-h-screen allows the page to grow, overflow-y-auto enables scrolling */
+        <div className="min-h-screen w-full relative flex items-center justify-center overflow-y-auto py-10">
             {/* Background Image */}
             <img
                 src={assets.finance}

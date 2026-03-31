@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     GET_ALL_CATEGORY: "/category",
     SAVE_CATEGORY: "/category",
     UPDATE_CATEGORY: (categoryId) => `/category/${categoryId}`,
+    ADD_INCOME: "/incomes",
     GET_CATEGORY_BY_TYPE: (type) => `/category/${type}`,
     DELETE_CATEGORY: (categoryId) => `/category/${categoryId}`,
 
