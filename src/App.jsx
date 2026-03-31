@@ -44,7 +44,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace/>}/>
                 </Routes>
             </BrowserRouter>
-            <Toaster position="top-right" reverseOrder={false}/>
+            <Toaster position="top-center" reverseOrder={false}/>
         </>
     );
 }

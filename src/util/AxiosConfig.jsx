@@ -1,5 +1,5 @@
 import axios from "axios";
-import {BASE_URL} from "./API_ENDPOINTS.js"
+import { BASE_URL } from "./API_ENDPOINTS.js";
 
 export const AxiosConfig = axios.create({
     baseURL: BASE_URL,
@@ -7,14 +7,22 @@ export const AxiosConfig = axios.create({
         "Content-Type": "application/json",
         Accept: "application/json"
     }
-})
+});
 
-const excludeEndPoints = ["/profile/login", "/profile/register", "/status", "/health", "/profile/activate"];
+const excludeEndPoints = [
+    "/profile/login",
+    "/profile/register",
+    "/status",
+    "/health",
+    "/profile/activate"
+];
 
-// Request Interceptors
-AxiosConfig.interceptors.request.use((config) => {
+// Request Interceptor: Attach Token
+AxiosConfig.interceptors.request.use(
+    (config) => {
         const shouldSkipToken = excludeEndPoints.some((endPoint) =>
-            config.url?.includes(endPoint));
+            config.url?.includes(endPoint)
+        );
 
         if (!shouldSkipToken) {
             const accessToken = localStorage.getItem("accessToken");
@@ -22,21 +30,18 @@ AxiosConfig.interceptors.request.use((config) => {
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
         }
-
         return config;
-    }, (error) => {
-        return Promise.reject(error);
-    }
-)
+    },
+    (error) => Promise.reject(error)
+);
 
-
-// Response Interceptors
+// Response Interceptor: Handle 401 Unauthorized
 AxiosConfig.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response) {
-            if (error.response.status === 401) {
-                // Clear storage on auth failure
+        if (error.response && error.response.status === 401) {
+            // Check if we are already on login to avoid redirect loops
+            if (!window.location.pathname.includes("/login")) {
                 localStorage.clear();
                 window.location.href = "/login";
             }
@@ -45,5 +50,4 @@ AxiosConfig.interceptors.response.use(
     }
 );
 
-// Add export statement at both places as export default AxiosConfig && export const AxiosConfig =axios.create({...})
 export default AxiosConfig;
