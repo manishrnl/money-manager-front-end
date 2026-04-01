@@ -14,7 +14,7 @@ const excludeEndPoints = [
     "/profile/register",
     "/status",
     "/health",
-    "/profile/activate"
+    "/profile/activate/**"
 ];
 
 // Request Interceptor: Attach Token

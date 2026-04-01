@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {assets} from "../assets/assets.js";
 import Input from "../components/Input.jsx";
@@ -28,7 +28,10 @@ const Signup = () => {
     const strengthCheck = getPasswordStrength(password);
     const [isLoading, setIsLoading] = useState(false);
 
-
+    useEffect(() => {
+        document.title = "Signup - Money Manager ";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
         let profileImageUrl = "";

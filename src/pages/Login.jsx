@@ -23,6 +23,8 @@ const Login = () => {
     const hasToasted = useRef(false); // Prevents double-toasting in Strict Mode
 
     useEffect(() => {
+        document.title = "Login - Money Manager";
+        window.scrollTo({ top: 0, behavior: "smooth" });
         const state = location.state;
         // Check if the user was redirected here because they weren't authorized
         if (state?.unauthorized && !hasToasted.current) {

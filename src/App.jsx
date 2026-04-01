@@ -8,6 +8,7 @@ import Filter from "./pages/Filter.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx"
+import ActivateAccounts from "./components/ActivateAccounts.jsx";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                     />
 
                     {/* 2. Protected Routes */}
+                    <Route path="/activate" element={<ActivateAccounts/>}/>
                     <Route path="/dashboard"
                            element={<ProtectedRoute><Home/></ProtectedRoute>}/>
                     <Route path="/income"

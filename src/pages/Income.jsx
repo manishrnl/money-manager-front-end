@@ -20,7 +20,10 @@ const Income = () => {
         show: false,
         data: null,
     })
-
+    useEffect(() => {
+        document.title = "Income - Money Manager ";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, []);
 
     const fetchIncomeDetails = async () => {
         setLoading(true);
