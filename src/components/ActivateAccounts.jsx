@@ -12,6 +12,8 @@ const ActivateAccount = () => {
     const token = searchParams.get("activationToken");
 
     useEffect(() => {
+        document.title = "Activate - Money Manager Account";
+        window.scrollTo({top: 0, behavior: "smooth"});
         const verifyToken = async () => {
             if (!token) {
                 setStatus('error');

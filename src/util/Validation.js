@@ -39,7 +39,7 @@ export const checkPasswordAndConfirmPassword = (password1, confirmPassword1) => 
 
 export const checkFullName = (fullName) => {
     const trimmedName = fullName ? fullName.trim() : "";
-    if (!trimmedName) return "Full Name is required";
+    if (!trimmedName) return "Full Name is Compulsory to create an account";
 
     const nameParts = trimmedName.split(" ").filter(part => part.length > 0);
     if (nameParts.length < 2) {
@@ -51,10 +51,10 @@ export const checkFullName = (fullName) => {
 
 export const getPasswordStrength = (password = "") => {
     return [
-        { label: "10+ Characters", met: password.length >= 10 },
-        { label: "Uppercase Letter", met: /[A-Z]/.test(password) },
-        { label: "Lowercase Letter", met: /[a-z]/.test(password) },
-        { label: "Number", met: /\d/.test(password) },
-        { label: "Special Character (@$!%*?&#)", met: /[@$!%*?&#]/.test(password) },
+        {label: "10+ Characters", met: password.length >= 10},
+        {label: "Uppercase Letter", met: /[A-Z]/.test(password)},
+        {label: "Lowercase Letter", met: /[a-z]/.test(password)},
+        {label: "Number", met: /\d/.test(password)},
+        {label: "Special Character (@$!%*?&#)", met: /[@$!%*?&#]/.test(password)},
     ];
 };

@@ -50,7 +50,7 @@ const AddIncomeForm = ({onAddIncome, categories}) => {
             {/* 1. Emoji Picker Centered */}
             <div className="flex justify-center mb-6">
                 <EmojiPickerPopup
-                    icon={income.icon}
+                    icon={income.icon||""}
                     onSelect={(selectedIcon) => handleChange('icon', selectedIcon)}
                 />
             </div>

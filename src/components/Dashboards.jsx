@@ -27,7 +27,7 @@ const Dashboards = ({children, activeMenu}) => {
                         {children}
 
                         {/* 4. Added a "Spacer" at the bottom for better UX */}
-                        <div className="h-20" />
+                        <div className="h-20"/>
                     </div>
                 </main>
             </div>

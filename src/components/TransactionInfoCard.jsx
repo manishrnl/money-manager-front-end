@@ -15,7 +15,7 @@ const TransactionInfoCard = ({ icon, title, date, amount, type, hideDeleteBtn, o
             return (
                 <img
                     src={icon}
-                    alt=""
+                    alt="Transaction"
                     className="w-full h-full object-contain p-2"
                     onError={(e) => {
                         e.target.style.display = 'none';

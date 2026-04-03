@@ -1,5 +1,5 @@
 export const BASE_URL = "https://money-manager-backend-2w6b.onrender.com/api/v1";
-// export const BASE_URL = "http://localhost:8787/api/v1";
+// export const BASE_URL = "http://localhost:8080/api/v1";
 export const CLOUDINARY_CLOUD_NAME = "dwnftgpia";
 export const API_ENDPOINTS = {
     ACTIVATE_ACCOUNTS: (activationToken)=>`/profile/activate?activationToken=${activationToken}`,

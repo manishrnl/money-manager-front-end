@@ -21,7 +21,7 @@ export const UseUser = () => {
 
         // 2. If user already exists in Context (from localStorage init), STOP.
         if (user && user.id) {
-            console.log("User found in state/storage, skipping DB call.");
+            console.log("User found in state/storage, skipping DB call.",user.data ||user || user.data.fullName);
             return;
         }
 

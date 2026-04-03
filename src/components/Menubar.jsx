@@ -24,15 +24,18 @@ const Menubar = ({activeMenu}) => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
-                setShowDropDown((false));
+                setShowDropDown(false);
             }
         };
+
         if (showDropDown) {
-            document.addEventListener("mousedown", handleClickOutside)
+            document.addEventListener("mousedown", handleClickOutside);
         }
+
         return () => {
-            document.addEventListener("mousedown", handleClickOutside)
-        }
+            // ALWAYS use removeEventListener in the cleanup
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, [showDropDown]);
     return (
         <div
@@ -49,19 +52,26 @@ const Menubar = ({activeMenu}) => {
                     )}
                 </button>
                 <div className="flex items-center gap-2">
-                    <img src={assets.finance} alt="Money Manager logo" className="h-10 w-10"/>
+                    <img src={assets.logo} alt="Money Manager logo" className="h-10 w-10"/>
                     <span
                         className="text-lg font-medium text-black truncate">Money Manager</span>
                 </div>
             </div>
             {/*Center for profile images / Avtar*/}
             <div className="relative" ref={dropDownRef}>
-                <button onClick={() => setShowDropDown(!showDropDown)}
-                        className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2">
-                    <User className="text-purple-500"/>
-                    <img src={user.profileImageUrl} alt="profile" className="rounded-full"/>
-
-
+                <button
+                    onClick={() => setShowDropDown(!showDropDown)}
+                    className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full overflow-hidden transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2"
+                >
+                    {user.profileImageUrl ? (
+                        <img
+                            src={user.profileImageUrl}
+                            alt="profile"
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <User className="text-purple-500"/>
+                    )}
                 </button>
                 {/*    Dropdown Menu*/}
                 {showDropDown && (

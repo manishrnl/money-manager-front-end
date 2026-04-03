@@ -43,6 +43,8 @@ const Category = () => {
     };
 
     useEffect(() => {
+        document.title = "Category - Money Manager";
+        window.scrollTo({top: 0, behavior: "smooth"});
         fetchCategoryDetails();
     }, []); // Add empty dependency array to prevent infinite loop
 
