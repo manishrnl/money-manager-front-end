@@ -9,6 +9,7 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx"
 import ActivateAccounts from "./components/ActivateAccounts.jsx";
+import PageNotFound from "./pages/PageNotFound.jsx";
 
 
 function App() {
@@ -27,23 +28,17 @@ function App() {
 
                     {/* 2. Protected Routes */}
                     <Route path="/activate" element={<ActivateAccounts/>}/>
-                    <Route path="/dashboard"
-                           element={<ProtectedRoute><Home/></ProtectedRoute>}/>
-                    <Route path="/income"
-                           element={<ProtectedRoute><Income/></ProtectedRoute>}/>
-                    <Route path="/expense"
-                           element={<ProtectedRoute><Expense/></ProtectedRoute>}/>
-                    <Route path="/category"
-                           element={<ProtectedRoute><Category/></ProtectedRoute>}/>
-                    <Route path="/filter"
-                           element={<ProtectedRoute><Filter/></ProtectedRoute>}/>
-
-                    {/* 3. Public Routes */}
+                    <Route path="/dashboard" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
+                    <Route path="/income" element={<ProtectedRoute><Income/></ProtectedRoute>}/>
+                    <Route path="/expense" element={<ProtectedRoute><Expense/></ProtectedRoute>}/>
+                    <Route path="/category" element={<ProtectedRoute><Category/></ProtectedRoute>}/>
+                    <Route path="/filter" element={<ProtectedRoute><Filter/></ProtectedRoute>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/signup" element={<Signup/>}/>
+                    <Route path="/page-not-found" element={<PageNotFound/>}/>
 
                     {/* Optional: Catch-all for 404s */}
-                    <Route path="*" element={<Navigate to="/" replace/>}/>
+                    <Route path="*" element={<Navigate to="/page-not-found" replace/>}/>
                 </Routes>
             </BrowserRouter>
             <Toaster position="top-center" reverseOrder={false}/>

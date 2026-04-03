@@ -132,12 +132,16 @@ const Category = () => {
                 // Refresh the list so the new category appears immediately
                 fetchCategoryDetails();
             }
+
         } catch (error) {
+
+
             console.error("Error Adding Category:", error.response?.data || error.message);
 
             // Specific error handling for Auth vs Validation
-            if (error.response?.status === 401) {
+            if (error.response?.status === 401 || error.response?.status === 403) {
                 toast.error("Session expired. Please login again.");
+
             } else {
                 toast.error(error.response?.data?.message || "Failed to add Category");
             }
