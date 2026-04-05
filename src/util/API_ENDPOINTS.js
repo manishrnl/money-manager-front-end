@@ -2,6 +2,7 @@ export const BASE_URL = "https://money-manager-backend-2w6b.onrender.com/api/v1"
 // export const BASE_URL = "http://localhost:8080/api/v1";
 export const CLOUDINARY_CLOUD_NAME = "dwnftgpia";
 export const API_ENDPOINTS = {
+
     ACTIVATE_ACCOUNTS: (activationToken) => `/profile/activate?activationToken=${activationToken}`,
     UPLOAD_IMAGE: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
     LOGIN: "/profile/login",
@@ -29,12 +30,14 @@ export const API_ENDPOINTS = {
 
     // Filters (New)
     FILTER_TRANSACTIONS: "/filters",
-    SEND_FILTERED_EMAIL: (email)=>`/notification/filterData/${email}`,
+    SEND_FILTERED_EMAIL: (email) => `/notification/filterData/${email}`,
 
     // Notifications & Reports
     SEND_INCOME_REPORT: (email) => `/notification/incomes/${email}`,
     SEND_EXPENSES_REPORT: (email) => `/notification/expenses/${email}`,
 
+    // Get Dashboard Data
+    GET_DASHBOARD_DATA: `/dashboard`
 
 
 }

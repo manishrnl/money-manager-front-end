@@ -3,9 +3,9 @@ import toast from "react-hot-toast";
 import {Plus} from "lucide-react";
 
 import Dashboards from "../components/Dashboards.jsx";
-import ExpenseList from "../components/ExpenseList.jsx";
+import ExpenseList from "../components/lists/ExpenseList.jsx";
 import Modals from "../components/Modals.jsx";
-import AddExpenseForm from "../components/AddExpenseForm.jsx";
+import AddExpenseForm from "../components/forms/AddExpenseForm.jsx";
 import AxiosConfig from "../util/AxiosConfig.jsx";
 import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
 

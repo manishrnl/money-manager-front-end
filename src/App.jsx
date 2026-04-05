@@ -10,6 +10,7 @@ import Signup from "./pages/Signup.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx"
 import ActivateAccounts from "./components/ActivateAccounts.jsx";
 import PageNotFound from "./pages/PageNotFound.jsx";
+import TransactionOverlay from "./components/TransactionOverlay.jsx";
 
 
 function App() {
@@ -33,6 +34,8 @@ function App() {
                     <Route path="/expense" element={<ProtectedRoute><Expense/></ProtectedRoute>}/>
                     <Route path="/category" element={<ProtectedRoute><Category/></ProtectedRoute>}/>
                     <Route path="/filter" element={<ProtectedRoute><Filter/></ProtectedRoute>}/>
+
+
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/signup" element={<Signup/>}/>
                     <Route path="/page-not-found" element={<PageNotFound/>}/>

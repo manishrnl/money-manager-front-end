@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import EmojiPickerPopup from "./EmojiPickerPopup.jsx";
-import Input from "./Input.jsx";
+import EmojiPickerPopup from "../EmojiPickerPopup.jsx";
+import Input from "../Input.jsx";
 import {LoaderCircle} from "lucide-react";
 import toast from "react-hot-toast";
 

@@ -1,9 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useContext } from "react";
-import { AppContext } from "../context/AppContext.jsx";
 
 const ProtectedRoute = ({ children }) => {
-    const { user } = useContext(AppContext);
+
     const location = useLocation();
     const token = localStorage.getItem("accessToken");
 

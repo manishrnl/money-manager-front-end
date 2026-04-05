@@ -1,13 +1,13 @@
 import Dashboards from "../components/Dashboards.jsx";
 import useUser from "../hooks/UseUser.jsx";
 import {Plus, Trash2} from "lucide-react";
-import CategoryList from "../components/CategoryList.jsx";
+import CategoryList from "../components/lists/CategoryList.jsx";
 import {useEffect, useState} from "react";
 import axiosConfig from "../util/AxiosConfig.jsx";
 import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
 import toast from "react-hot-toast";
 import Modals from "../components/Modals.jsx";
-import AddCategoryForm from "../components/AddCategoryForm.jsx";
+import AddCategoryForm from "../components/forms/AddCategoryForm.jsx";
 
 const Category = () => {
     useUser();

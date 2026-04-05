@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Input from "./Input.jsx";
-import EmojiPickerPopup from "./EmojiPickerPopup.jsx";
+import Input from "../Input.jsx";
+import EmojiPickerPopup from "../EmojiPickerPopup.jsx";
 import { LoaderPinwheel, Trash2 } from "lucide-react"; // Added Trash2 icon
 
 const AddCategoryForm = ({ onAddCategory, initialCategoryData, isEditing, onDeleteCategory }) => {

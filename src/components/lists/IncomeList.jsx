@@ -1,12 +1,12 @@
 import {Download, Layers2, LoaderPinwheel, Mail} from "lucide-react";
-import TransactionInfoCard from "./TransactionInfoCard.jsx";
+import TransactionInfoCard from "../TransactionInfoCard.jsx";
 import moment from "moment";
-import UseUser from "../hooks/UseUser.jsx";
+import UseUser from "../../hooks/UseUser.jsx";
 import {useState} from "react";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
-import AxiosConfig from "../util/AxiosConfig.jsx";
-import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
+import AxiosConfig from "../../util/AxiosConfig.jsx";
+import {API_ENDPOINTS} from "../../util/API_ENDPOINTS.js";
 
 const IncomeList = ({transactions, onDelete, onUpdate}) => {
     const {user} = UseUser();

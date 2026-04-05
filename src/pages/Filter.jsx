@@ -25,7 +25,8 @@ import {
 } from "lucide-react";
 import * as XLSX from 'xlsx';
 import UseUser from "../hooks/UseUser.jsx";
-import ShowPremiumToast from "../util/ShowPremiumToast.jsx"; // npm install xlsx
+import ShowPremiumToast from "../util/ShowPremiumToast.jsx";
+import {addThousandsSeparator} from "../util/ThousandsSeparator.js"; // npm install xlsx
 
 const Filter = () => {
     const COLORS = {income: "#10b981", expense: "#f43f5e", bg: "#f8fafc"};
@@ -87,6 +88,7 @@ const Filter = () => {
     }, [dates, keyword]);
 
     useEffect(() => {
+        document.title="Filters - Money Manager";
         fetchData();
     }, [fetchData]);
 
@@ -154,7 +156,7 @@ const Filter = () => {
                     className="lg:w-80 p-6 lg:sticky lg:top-0 lg:h-screen border-r border-slate-200 bg-white">
                     <div className="mb-8">
                         <h2 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                            <FilterIcon size={20} className="text-emerald-500"/> Report Filters
+                            <FilterIcon size={20} className="text-emerald-500"/> Apply Filters
                         </h2>
                     </div>
 
@@ -222,7 +224,7 @@ const Filter = () => {
                                 className="w-full py-3 px-4 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-black flex items-center justify-between hover:bg-emerald-100 transition-all">
                             <span
                                 className="flex items-center gap-2 uppercase tracking-widest"><Mail
-                                size={16}/> Email PDF</span>
+                                size={16}/> Email Data</span>
                             {emailLoading ? <Loader2 className="animate-spin" size={14}/> :
                                 <ChevronRight size={14}/>}
                         </button>
@@ -230,7 +232,7 @@ const Filter = () => {
                                 className="w-full py-3 px-4 bg-blue-50 text-blue-700 rounded-xl text-xs font-black flex items-center justify-between hover:bg-blue-100 transition-all">
                             <span
                                 className="flex items-center gap-2 uppercase tracking-widest"><FileSpreadsheet
-                                size={16}/> Export Excel</span>
+                                size={16}/> Export To Excel</span>
                             <ChevronRight size={14}/>
                         </button>
                     </div>
@@ -243,17 +245,17 @@ const Filter = () => {
                         <div
                             className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                             <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Income</p>
-                            <h3 className="text-3xl font-black text-emerald-500">₹{totalIncome.toLocaleString()}</h3>
+                            <h3 className="text-3xl font-black text-emerald-500">₹ {addThousandsSeparator(totalIncome)}</h3>
                         </div>
                         <div
                             className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                             <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Expense</p>
-                            <h3 className="text-3xl font-black text-rose-500">₹{totalExpense.toLocaleString()}</h3>
+                            <h3 className="text-3xl font-black text-rose-500">₹ {addThousandsSeparator(totalExpense)}</h3>
                         </div>
                         <div
                             className="bg-slate-900 p-6 rounded-3xl shadow-xl shadow-slate-200 text-white">
                             <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Savings</p>
-                            <h3 className="text-3xl font-black">₹{(totalIncome - totalExpense).toLocaleString()}</h3>
+                            <h3 className="text-3xl font-black">₹ {addThousandsSeparator((totalIncome - totalExpense))}</h3>
                         </div>
                     </div>
 
@@ -330,7 +332,7 @@ const Filter = () => {
                                             </div>
                                         </td>
                                         <td className={`p-6 text-right font-black text-lg ${t.type === 'INCOME' ? 'text-emerald-500' : 'text-slate-900'}`}>
-                                            {t.type === 'INCOME' ? '+' : '-'} ₹{t.amount.toLocaleString()}
+                                            {t.type === 'INCOME' ? '+' : '-'} ₹ {addThousandsSeparator(t.amount)}
                                         </td>
                                     </tr>
                                 ))}

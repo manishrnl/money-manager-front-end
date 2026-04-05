@@ -3,9 +3,9 @@ import toast from "react-hot-toast";
 import {Plus} from "lucide-react";
 
 import Dashboards from "../components/Dashboards.jsx";
-import IncomeList from "../components/IncomeList.jsx";
+import IncomeList from "../components/lists/IncomeList.jsx";
 import Modals from "../components/Modals.jsx";
-import AddIncomeForm from "../components/AddIncomeForm.jsx";
+import AddIncomeForm from "../components/forms/AddIncomeForm.jsx";
 import AxiosConfig from "../util/AxiosConfig.jsx";
 import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
 
