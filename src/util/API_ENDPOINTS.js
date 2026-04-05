@@ -17,8 +17,15 @@ export const API_ENDPOINTS = {
     UPDATE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
 
 
+
     GET_ALL_INCOMES: "/incomes",
     ADD_INCOME: "/incomes",
     DELETE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
-    SEND_INCOME_REPORT: (email) => `/notification/incomes/${email}`
+    SEND_INCOME_REPORT: (email) => `/notification/incomes/${email}`,
+
+    GET_ALL_EXPENSES: "/expenses",
+    UPDATE_EXPENSE_BY_ID: (expenseId) => `/expenses/${expenseId}`,
+    ADD_EXPENSE: "/expenses",
+    DELETE_EXPENSE_BY_ID: (expensesId) => `/expenses/${expensesId}`,
+    SEND_EXPENSES_REPORT: (email) => `/notification/expenses/${email}`
 }
