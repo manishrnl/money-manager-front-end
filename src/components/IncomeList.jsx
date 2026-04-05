@@ -8,64 +8,43 @@ import * as XLSX from "xlsx";
 import AxiosConfig from "../util/AxiosConfig.jsx";
 import {API_ENDPOINTS} from "../util/API_ENDPOINTS.js";
 
-const IncomeList = ({transactions, onDelete}) => {
-    const {user} = UseUser(); // Invoke the hook to get user data
+const IncomeList = ({transactions, onDelete, onUpdate}) => {
+    const {user} = UseUser();
     const [loadingEmail, setLoadingEmail] = useState(false);
     const [loadingExports, setLoadingExports] = useState(false);
 
-    // --- Function: Export to Excel ---
     const handleExportToExcel = () => {
-        let index = 0;
-        if (!transactions || transactions.length === 0) {
-            return toast.error("No data available to export");
-        }
-
+        if (!transactions?.length) return toast.error("No data to export");
         setLoadingExports(true);
         try {
-            // 1. Prepare the data (Mapping for cleaner headers)
-            const excelData = transactions.map((item) => ({
-                Sl_No: ++index,
-                Income_Source: item.name,
-                Amount: item.amount,
-                Category: item.categoryName || "Income",
-                Date: moment(item.date).format("YYYY-MM-DD"),
+            const excelData = transactions.map((item, i) => ({
+                "Sl . No": i + 1,
+                "Income Source": item.name,
+                "Total Amount": item.amount,
+                "Category Type": "Income",
+                "Date": moment(item.date).format("YYYY-MM-DD"),
             }));
-
-            // 2. Create worksheet and workbook
-            const worksheet = XLSX.utils.json_to_sheet(excelData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Incomes");
-
-            // 3. Trigger download
-            XLSX.writeFile(workbook, `${user.fullName}_Income_Report_${moment().format("YYYYMMDD")}.xlsx`);
-            toast.success("Excel file downloaded successfully!");
-        } catch (error) {
-            toast.error("Failed to export Excel file");
-            console.error(error);
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Incomes");
+            XLSX.writeFile(wb, `${user.fullName}_Income_Report_${moment().format("DD_MM_YY")}.xlsx`);
+            toast.success("Excel downloaded!");
         } finally {
             setLoadingExports(false);
         }
     };
 
-    // --- Function: Send Email ---
     const handleSendEmail = async () => {
-        if (!user?.email) {
-            return toast.error("User email not found");
-        }
+        if (!user?.email) return toast.error("User email not found");
+        if (!transactions?.length) return toast.error("No data to send");
 
         setLoadingEmail(true);
         try {
-            // Assuming your backend has an endpoint to trigger an email report
-            const response = await AxiosConfig.post(API_ENDPOINTS.SEND_INCOME_REPORT, {
-                email: user.email,
-                data: transactions // Optional: send data if backend is stateless
-            });
-
-            if (response.status === 200) {
-                toast.success(`Report sent to ${user.email}`);
-            }
+            // Sends the full list body to Spring Boot as requested
+            await AxiosConfig.post(API_ENDPOINTS.SEND_INCOME_REPORT(user.email), transactions);
+            toast.success(`Report sent to ${user.email}`);
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to send email");
+            toast.error("Failed to send email report");
         } finally {
             setLoadingEmail(false);
         }
@@ -73,64 +52,45 @@ const IncomeList = ({transactions, onDelete}) => {
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div
-                className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-                <h5 className="text-xl font-bold text-gray-800 tracking-tight">Income
-                    Sources</h5>
-
-                <div className="flex items-center gap-3">
-                    <button
-                        disabled={loadingEmail}
-                        onClick={handleSendEmail}
-                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
-                    >
-                        {loadingEmail ? (
-                            <LoaderPinwheel size={16}
-                                            className="animate-spin text-indigo-500"/>
-                        ) : (
-                            <Mail size={16} className="text-indigo-500"/>
-                        )}
-                        <span>{loadingEmail ? "Sending..." : "Email"}</span>
+            <div className="flex items-center justify-between border-b pb-4 mb-6">
+                <h5 className="text-xl font-bold text-gray-800">Income History</h5>
+                <div className="flex gap-3">
+                    <button onClick={handleSendEmail} disabled={loadingEmail}
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-xl hover:bg-indigo-100">
+                        {loadingEmail ? <LoaderPinwheel className="animate-spin" size={16}/> :
+                            <Mail size={16}/>}
+                        <span>Email Report</span>
                     </button>
-
-                    <button
-                        disabled={loadingExports}
-                        onClick={handleExportToExcel}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold rounded-xl hover:bg-emerald-100 transition-all active:scale-95 disabled:opacity-50"
-                    >
-                        {loadingExports ? (
-                            <LoaderPinwheel size={16}
-                                            className="animate-spin text-emerald-600"/>
-                        ) : (
-                            <Download size={16} className="text-emerald-600"/>
-                        )}
-                        <span>{loadingExports ? "Exporting..." : "Download"}</span>
+                    <button onClick={handleExportToExcel} disabled={loadingExports}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl hover:bg-emerald-100">
+                        {loadingExports ?
+                            <LoaderPinwheel className="animate-spin" size={16}/> :
+                            <Download size={16}/>}
+                        <span>Excel</span>
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {Array.isArray(transactions) && transactions.length > 0 ? (
+                {transactions.length > 0 ? (
                     transactions.map((income) => (
                         <TransactionInfoCard
                             key={income.id}
                             title={income.name}
-                            icon={income.icon || ""}
-                            date={moment(income.date).format('Do MMM YYYY')}
+                            icon={income?.icon }
+                            date={moment(income.date).format("Do MMM YYYY")}
                             amount={income.amount}
-                            category={income.categoryName || "INCOME"}
+                            category={income.categoryName}
                             type="income"
                             onDelete={() => onDelete(income)}
+                            onUpdate={() => onUpdate(income)}
                         />
                     ))
                 ) : (
                     <div
-                        className="col-span-full flex flex-col items-center justify-center py-16 border-2 border-dashed border-gray-100 rounded-3xl bg-gray-50/30">
-                        <Layers2 className="text-gray-300 mb-3" size={48} strokeWidth={1.5}/>
-                        <p className="text-gray-400 font-medium text-center">
-                            No Income Found yet.<br/>
-                            <span className="text-sm font-normal">Add a source to start tracking.</span>
-                        </p>
+                        className="col-span-full py-16 text-center border-2 border-dashed border-gray-100 rounded-3xl">
+                        <Layers2 className="mx-auto text-gray-300 mb-3" size={48}/>
+                        <p className="text-gray-400">No income records found.</p>
                     </div>
                 )}
             </div>
@@ -139,3 +99,4 @@ const IncomeList = ({transactions, onDelete}) => {
 };
 
 export default IncomeList;
+

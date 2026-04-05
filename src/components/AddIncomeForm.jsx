@@ -2,131 +2,82 @@ import {useEffect, useState} from "react";
 import EmojiPickerPopup from "./EmojiPickerPopup.jsx";
 import Input from "./Input.jsx";
 import {LoaderCircle} from "lucide-react";
+import toast from "react-hot-toast";
 
-const AddIncomeForm = ({onAddIncome, categories}) => {
+const AddIncomeForm = ({ onAction, categories, initialData, isUpdate = false }) => {
     const [loading, setLoading] = useState(false);
     const [income, setIncome] = useState({
-        name: "",
-        amount: "",
-        // This creates a "YYYY-MM-DD" string for today
-        date: new Date().toISOString().split('T')[0],
-        icon: "",
-        categoryId: ""
+        name: initialData?.name || "",
+        amount: initialData?.amount || "",
+        date: initialData?.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        icon: initialData?.icon || "💰",
+        categoryId: initialData?.categoryId || ""
     });
 
-    const handleChange = (key, value) => {
-        setIncome({...income, [key]: value});
-    };
+    // FIX: Set default category immediately so you don't get "please select category"
     useEffect(() => {
         if (categories?.length > 0 && !income.categoryId) {
-            const salaryCat = categories.find(
-                (cat) => cat.name.toLowerCase() === "salary"
-            );
-            if (salaryCat) {
-                setIncome(prev => ({...prev, categoryId: salaryCat.id}));
-            } else {
-                // Fallback to the first available category if "Salary" isn't found
-                setIncome(prev => ({...prev, categoryId: categories[0].id}));
-            }
+            const salaryCat = categories.find(c => c.name.toLowerCase() === "salary");
+            const defaultId = salaryCat ? salaryCat.id : categories[0].id;
+            setIncome(prev => ({...prev, categoryId: defaultId}));
         }
-    }, [categories]);
-    // Use optional chaining in case categories is undefined/null
-    const categoryOptions = categories?.map(category => ({
-        value: category.id,
-        label: category.name
-    })) || [];
+    }, [categories, income.categoryId]);
 
-    const handleAddIncome = async () => {
+    const handleSubmit = async () => {
+        if (!income.name || !income.amount) return toast.error("Please fill required fields");
+        if (!income.categoryId) return toast.error("Please select a category");
+
         setLoading(true);
-        try {
-            await onAddIncome(income);
-        } finally {
-            setLoading(false)
+        await onAction({
+            ...income,
+            amount: Number(income.amount),
+            categoryId: Number(income.categoryId)
+        });
+        setLoading(false);
+    };
+
+    // FIX: Helper to render Image if icon is a URL
+    const renderIconPreview = () => {
+        const isLink = typeof income.icon === 'string' && (income.icon.startsWith('http') || income.icon.startsWith('/'));
+        if (isLink) {
+            return <img src={income.icon} alt="icon" className="w-10 h-10 object-contain mx-auto" />;
         }
+        return <span className="text-3xl">{income.icon}</span>;
+    };
 
-    }
     return (
-        <div className="space-y-5">
-            {/* 1. Emoji Picker Centered */}
-            <div className="flex justify-center mb-6">
+        <div className="space-y-5 p-2">
+            <div className="flex justify-center mb-4">
+                {/* We pass the rendered element to the popup's trigger */}
                 <EmojiPickerPopup
-                    icon={income.icon||""}
-                    onSelect={(selectedIcon) => handleChange('icon', selectedIcon)}
+                    icon={renderIconPreview()}
+                    onSelect={(i) => setIncome({...income, icon: i})}
                 />
             </div>
-
-            {/* 2. Form Fields Grouped Correctly */}
-            <div className="grid grid-cols-1 gap-4">
-                <Input
-                    value={income.name}
-                    onChange={(e) => handleChange('name', e.target.value)} // Fixed: (e) => e.target.value
-                    label="Income Source"
-                    placeholder="e.g., Salary, Freelance"
-                    type="text"
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
-                        value={income.amount}
-                        onChange={(e) => handleChange('amount', e.target.value)}
-                        label="Amount"
-                        placeholder="e.g., 500.00"
-                        type="number"
-                    />
-                    <Input
-                        value={income.date}
-                        onChange={(e) => handleChange('date', e.target.value)}
-                        label="Date"
-                        type="date"
-                        max={new Date().toISOString().split('T')[0]} // Prevents future dates
-                    />
-                </div>
-
-                <Input
-                    value={income.categoryId}
-                    onChange={(e) => handleChange('categoryId', e.target.value)}
-                    label="Category"
-                    isSelect={true}
-                    options={categoryOptions}
-                />
+            <Input label="Income Source" value={income.name}
+                   onChange={(e) => setIncome({...income, name: e.target.value})}
+                   placeholder="e.g. Freelance"/>
+            <div className="grid grid-cols-2 gap-4">
+                <Input label="Amount" type="number" value={income.amount}
+                       onChange={(e) => setIncome({...income, amount: e.target.value})}/>
+                <Input label="Date" type="date" value={income.date}
+                       onChange={(e) => setIncome({...income, date: e.target.value})}/>
             </div>
-
-            {/* 3. Improved Button with Loading State */}
-            <div className="flex justify-end mt-8">
-                <button
-                    onClick={handleAddIncome}
-                    disabled={loading}
-                    className={`
-            relative group flex items-center justify-center gap-3 px-8 py-3.5 
-            rounded-xl font-bold text-sm tracking-wide transition-all duration-300
-            ${loading
-                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xl shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 active:scale-95'}
-        `}
-                >
-                    {loading ? (
-                        <>
-                            <LoaderCircle className="animate-spin text-indigo-500" size={20}/>
-                            <span>Processing...</span>
-                        </>
-                    ) : (
-                        <>
-                            <span>Add Income</span>
-                            {/* Subtle arrow icon that appears/moves on hover */}
-                            <div
-                                className="w-5 h-5 flex items-center justify-center bg-white/20 rounded-full group-hover:bg-white/30 transition-colors">
-                                <svg
-                                    width="12" height="12" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" strokeWidth="3" strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M5 12h14m-7-7 7 7-7 7"/>
-                                </svg>
-                            </div>
-                        </>
-                    )}
-                </button>
-            </div>
+            <Input
+                label="Category"
+                isSelect={true}
+                value={income.categoryId}
+                onChange={(e) => setIncome({...income, categoryId: e.target.value})}
+                options={categories?.map(c => ({value: c.id, label: c.name})) || []}
+            />
+            <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="w-full mt-4 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg hover:bg-indigo-700 transition-all disabled:bg-indigo-300"
+            >
+                {loading ? <LoaderCircle className="animate-spin inline mr-2"/> : null}
+                {isUpdate ? "Save Changes" : "Add Income"}
+            </button>
         </div>
     );
 };

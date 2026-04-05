@@ -1,5 +1,5 @@
-// export const BASE_URL = "https://money-manager-backend-2w6b.onrender.com/api/v1";
-export const BASE_URL = "http://localhost:8080/api/v1";
+export const BASE_URL = "https://money-manager-backend-2w6b.onrender.com/api/v1";
+// export const BASE_URL = "http://localhost:8080/api/v1";
 export const CLOUDINARY_CLOUD_NAME = "dwnftgpia";
 export const API_ENDPOINTS = {
     ACTIVATE_ACCOUNTS: (activationToken) => `/profile/activate?activationToken=${activationToken}`,
@@ -12,12 +12,13 @@ export const API_ENDPOINTS = {
     SAVE_CATEGORY: "/category",
     UPDATE_CATEGORY: (categoryId) => `/category/${categoryId}`,
     GET_CATEGORY_BY_TYPE: (type) => `/category/${type}`,
-
     DELETE_CATEGORY: (categoryId) => `/category/${categoryId}`,
-
 
     GET_ALL_INCOMES: "/incomes",
     ADD_INCOME: "/incomes",
+    UPDATE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
     DELETE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
-    SEND_INCOME_REPORT:"/notification/expense"
+    SEND_INCOME_REPORT: (email) => `/notification/incomes/${email}`,
+
+
 }
