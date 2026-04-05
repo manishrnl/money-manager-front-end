@@ -12,13 +12,13 @@ export const API_ENDPOINTS = {
     SAVE_CATEGORY: "/category",
     UPDATE_CATEGORY: (categoryId) => `/category/${categoryId}`,
     GET_CATEGORY_BY_TYPE: (type) => `/category/${type}`,
+
     DELETE_CATEGORY: (categoryId) => `/category/${categoryId}`,
+    UPDATE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
+
 
     GET_ALL_INCOMES: "/incomes",
     ADD_INCOME: "/incomes",
-    UPDATE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
     DELETE_INCOME_BY_ID: (incomeId) => `/incomes/${incomeId}`,
-    SEND_INCOME_REPORT: (email) => `/notification/incomes/${email}`,
-
-
+    SEND_INCOME_REPORT: (email) => `/notification/incomes/${email}`
 }
