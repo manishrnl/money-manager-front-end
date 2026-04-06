@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
     ACTIVATE_ACCOUNTS: (activationToken) => `/profile/activate?activationToken=${activationToken}`,
     UPLOAD_IMAGE: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
     LOGIN: "/profile/login",
+    REFRESH_TOKEN: (refreshToken) => `/profile/refresh/${refreshToken}`,
     REGISTER: "/profile/register",
     GET_USER_PROFILE: "/profile",
 

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useRef } from "react";
 import { API_ENDPOINTS } from "../util/API_ENDPOINTS.js";
 import { AppContext } from "../context/AppContext.jsx";
-import AxiosConfig from "../util/AxiosConfig.jsx"; // Ensure this matches your export type
+import AxiosConfig from "../util/AxiosConfig.jsx";
 
 export const UseUser = () => {
     const { setUser, clearUser, user } = useContext(AppContext);
@@ -10,16 +10,17 @@ export const UseUser = () => {
     const isFetching = useRef(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
 
-        if (!token) {
+        // Check if we have ANY way to authenticate
+        if (!accessToken && !refreshToken) {
             navigate("/login");
             return;
         }
 
-        if (user && user.id) {
-            return;
-        }
+        // If user is already loaded in context, don't fetch again
+        if (user && user.id) return;
 
         const fetchUserInfo = async () => {
             if (isFetching.current) return;
@@ -30,8 +31,9 @@ export const UseUser = () => {
                 const userData = response.data.data || response.data;
                 setUser(userData);
             } catch (error) {
+                // If it fails here, it means the interceptor also failed to refresh
                 clearUser();
-                navigate("/login");
+                // navigate("/login"); // Interceptor already handles the redirect
             } finally {
                 isFetching.current = false;
             }
@@ -40,7 +42,6 @@ export const UseUser = () => {
         fetchUserInfo();
     }, [user, setUser, clearUser, navigate]);
 
-    // --- CRITICAL FIX: RETURN THE DATA ---
     return { user, setUser, clearUser };
 };
 
