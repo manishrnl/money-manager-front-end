@@ -17,11 +17,11 @@ import {
 } from "../util/Validation.js";
 
 const Signup = () => {
-    const [fullName, setFullName] = useState("Manish Kumar");
-    const [email, setEmail] = useState("manish.rnl@zohomail.in");
-    const [password, setPassword] = useState("Manish@123456");
-    const [confirmPassword, setConfirmPassword] = useState("Manish@123456");
-    const [profilePhoto, setProfilePhoto] = useState("https://lh3.googleusercontent.com/a/ACg8ocLoqMb3wgVkYC5TnSiBo-m5lZi-7EdTXyKwCy52BnPEAfqF0fI6=s288-c-no");
+    const [fullName, setFullName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [profilePhoto, setProfilePhoto] = useState("");
     const navigate = useNavigate();
     const strengthCheck = getPasswordStrength(password);
     const [isLoading, setIsLoading] = useState(false);
