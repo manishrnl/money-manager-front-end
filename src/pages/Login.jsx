@@ -9,8 +9,8 @@ import { AppContext } from "../context/AppContext.jsx";
 import ShowPremiumToast from "../util/ShowPremiumToast.jsx";
 
 const Login = () => {
-    const [email, setEmail] = useState("89@zohomail.in");
-    const [password, setPassword] = useState("password");
+    const [email, setEmail] = useState("manish.rnl@zohomail.in");
+    const [password, setPassword] = useState("Manish@123456");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
