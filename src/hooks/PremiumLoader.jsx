@@ -27,7 +27,7 @@ const PremiumLoader = ({ isDone }) => {
     ];
 
     useEffect(() => {
-        const totalDuration = 120;
+        const totalDuration = 180;
         const intervalTime = 1000;
         const increment = 100 / totalDuration;
 
@@ -51,7 +51,7 @@ const PremiumLoader = ({ isDone }) => {
                     return (prev + 1) % technicalLogs.length;
                 });
             },
-            isDone ? 500 : 7000,
+            isDone ? 500 : 10000,
         );
 
         // 3. CLEANUP (Crucial: This must always be returned)
